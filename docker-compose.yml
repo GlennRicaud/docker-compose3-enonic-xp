@@ -25,7 +25,7 @@ services:
     hostname: SITE_HOSTNAME
     restart: always
 
-  volumes:
-    repo:
-    work:
-    snapshots:
+volumes:
+  repo:
+  work:
+  snapshots:
