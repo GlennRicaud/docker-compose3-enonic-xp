@@ -1,0 +1,31 @@
+version: '3'
+services:
+  apache2:
+    build: apache2
+    hostname: SITE_HOSTNAME
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8001:8001"
+  exp:
+    build: exp
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - repo:/enonic-xp/home/repo
+      - work:/enonic-xp/home/work
+      - snapshots:/enonic-xp/home/snapshots
+    labels:
+      io.enonic.backup.prescripts: "/usr/local/bin/backup.sh"
+      io.enonic.backup.data: "/enonic-xp/home/snapshots,/enonic-xp/home/repo"
+  mail:
+    image: enoniccloud/postfix
+    hostname: SITE_HOSTNAME
+    restart: always
+
+  volumes:
+    repo:
+    work:
+    snapshots:
