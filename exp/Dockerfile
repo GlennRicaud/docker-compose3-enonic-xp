@@ -33,7 +33,7 @@ COPY config/* $XP_ROOT/home/config/
 COPY backup.sh /usr/local/bin/backup.sh
 RUN chmod +x /usr/local/bin/backup.sh
 
-RUN mkdir $XP_ROOT/home/repo
-RUN chown enonic-xp -R $XP_ROOT/home
+RUN mkdir $XP_ROOT/home/repo && mkdir -p $XP_ROOT/home/work && mkdir -p $XP_ROOT/home/snapshots
+RUN chown -R enonic-xp:enonic-xp $XP_ROOT/home
 
 USER enonic-xp
