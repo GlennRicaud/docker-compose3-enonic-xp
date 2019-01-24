@@ -16,7 +16,7 @@ expVHostFile=exp/config/com.enonic.xp.web.vhost.cfg
 ctxHome=$(dirname "$0")
 
 apacheTemplateRoot="$ctxHome/_apache_templates"
-apacheTemplateName="apache2_no_ssl"
+templatePostfix="no_ssl"
 apacheRootFolder="$ctxHome/apache2"
 apacheVHostTemplate=$apacheRootFolder/sites/vhost.example.conf.template
 
@@ -32,15 +32,15 @@ do
       shift # past value
       ;;
       --letsencrypt)
-      apacheTemplateName="apache2_letsencrypt"
+      templatePostfix="letsencrypt"
       shift # past argument
       ;;
 			--usercert)
-			apacheTemplateName="apache2_user	cert"
+			templatePostfix="usercert"
 			shift # past argument
 			;;
 			--no-ssl)
-			apacheTemplateName="apache2_no_ssl"
+			templatePostfix="no_ssl"
 			shift # past argument
 			;;
       *)    # unknown option
@@ -63,14 +63,15 @@ echo "##########################################################################
 
 echo "Creating apache2 config for $hostName"
 
-apacheTemplate=$apacheTemplateRoot/$apacheTemplateName
+apacheTemplate="$apacheTemplateRoot/apache2_${templatePostfix}"
 if [ ! -d "$apacheTemplate" ]; then
 	echo "no maching apache-template found at $apacheTemplate"
 	exit 1
 fi
 
-echo "Using template $apacheTemplate"
-cp -R $apacheTemplate/* $apacheRootFolder
+echo "Using apache2-template $apacheTemplate"
+mkdir -p $apacheRootFolder
+cp -R ${apacheTemplate}/* $apacheRootFolder
 
 cp $apacheVHostTemplate $apacheRootFolder/sites/$hostName.conf
 sed -i".tmp" -e "s/##SITE_HOSTNAME_ESCAPED##/$(echo $hostName | sed 's/\./\\\\./g')/g" $apacheRootFolder/sites/$hostName.conf
@@ -84,7 +85,11 @@ sed -i".tmp" -e "s/##SITE_HOSTNAME##/$hostName/g" $expVHostFile
 rm $expVHostFile.tmp
 
 echo "------------------------------------------------------------"
-echo "Adding $hostName to docker-compose.yml"
+echo "Setting up docker-compose.yml"
+
+composeTemplate="docker-compose_${templatePostfix}.yml"
+echo "Using docker-compose-template $composeTemplate"
+mv $composeTemplate docker-compose.yml
 
 sed -i".tmp" -e "s/##SITE_HOSTNAME##/$hostName/g" docker-compose.yml
 rm docker-compose.yml.tmp
