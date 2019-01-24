@@ -1,7 +1,7 @@
 <VirtualHost *:80>
 
-  ServerName ##SITE_HOSTNAME##
-  ServerAlias ##www.SITE_HOSTNAME##
+  ServerName SITE_HOSTNAME
+  ServerAlias www.SITE_HOSTNAME
 
   DocumentRoot /var/www/html/
 

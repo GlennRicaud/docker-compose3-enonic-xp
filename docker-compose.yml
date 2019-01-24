@@ -2,7 +2,7 @@ version: '3'
 services:
   apache2:
     build: apache2
-    hostname: SITE_HOSTNAME
+    hostname: ##SITE_HOSTNAME##
     restart: always
     ports:
       - "80:80"
@@ -19,10 +19,9 @@ services:
       - snapshots:/enonic-xp/home/snapshots
     labels:
       io.enonic.backup.prescripts: "/usr/local/bin/backup.sh"
-      io.enonic.backup.data: "/enonic-xp/home/snapshots,/enonic-xp/home/repo"
   mail:
     image: enoniccloud/postfix
-    hostname: SITE_HOSTNAME
+    hostname: ##SITE_HOSTNAME##
     restart: always
 
 volumes:

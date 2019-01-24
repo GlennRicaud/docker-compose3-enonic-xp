@@ -1,45 +1,96 @@
 #!/bin/bash
 
+function print_usage() {
+  echo "---------------------------------------"
+  echo " Usage: $executable -h <HOSTNAME> [--no-ssl] [--letsencrypt] [--usercert]"
+	echo "  -h hostname : hostname, e.g orgname-instansname.enonic.cloud"
+  echo "  --no-ssl [DEFAULT]: no ssl config in apache "
+	echo "  --letsencrypt : use apache-template with letsencrypt "
+	echo "  --usercert : use apache-config with user provided ssl-certificate "
+  echo "---------------------------------------"
+}
+
 xpProj="exp"
-apacheProj="apache2"
+expVHostFile=exp/config/com.enonic.xp.web.vhost.cfg
 
+ctxHome=$(dirname "$0")
 
-echo "###############################################################################"
-echo "### Enonic XP configurator"
-instanceHostname=$1
+apacheTemplateRoot="$ctxHome/_apache_templates"
+apacheTemplateName="apache2_no_ssl"
+apacheRootFolder="$ctxHome/apache2"
+apacheVHostTemplate=$apacheRootFolder/sites/vhost.example.conf.template
 
-if [ -z "$instanceHostname" ]; then
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+  key="$1"
+
+  case $key in
+      -h|--host)
+      hostName="$2"
+      shift # past argument
+      shift # past value
+      ;;
+      --letsencrypt)
+      apacheTemplateName="apache2_letsencrypt"
+      shift # past argument
+      ;;
+			--usercert)
+			apacheTemplateName="apache2_user	cert"
+			shift # past argument
+			;;
+			--no-ssl)
+			apacheTemplateName="apache2_no_ssl"
+			shift # past argument
+			;;
+      *)    # unknown option
+      POSITIONAL+=("$1") # save it in an array for later
+      shift # past argument
+      ;;
+  esac
+done
+
+if [ -z "$hostName" ]; then
 	echo "hostname argument is missing, aborting."
+	print_usage
 	exit 1
 fi
 
-apache2VHostTemplate=apache2/sites/vhost.example.conf.template
-expVHostFile=exp/config/com.enonic.xp.web.vhost.cfg
-
+echo ""
 echo "###############################################################################"
-echo "### Creating apache2 config for $instanceHostname"
-
-cp $apache2VHostTemplate apache2/sites/$instanceHostname.conf
-sed -i".tmp" -e "s/SITE_HOSTNAME_ESCAPED/$(echo $instanceHostname | sed 's/\./\\\\./g')/g" apache2/sites/$instanceHostname.conf
-sed -i".tmp" -e "s/SITE_HOSTNAME/$instanceHostname/g" apache2/sites/$instanceHostname.conf
-rm apache2/sites/$instanceHostname.conf.tmp
-
+echo "### Enonic XP configurator"
 echo "###############################################################################"
-echo "### Adding $instanceHostname to Enonic XP vhosts"
 
-sed -i".tmp" -e "s/SITE_HOSTNAME/$instanceHostname/g" $expVHostFile
+echo "Creating apache2 config for $hostName"
+
+apacheTemplate=$apacheTemplateRoot/$apacheTemplateName
+if [ ! -d "$apacheTemplate" ]; then
+	echo "no maching apache-template found at $apacheTemplate"
+	exit 1
+fi
+
+echo "Using template $apacheTemplate"
+cp -R $apacheTemplate/* $apacheRootFolder
+
+cp $apacheVHostTemplate $apacheRootFolder/sites/$hostName.conf
+sed -i".tmp" -e "s/##SITE_HOSTNAME_ESCAPED##/$(echo $hostName | sed 's/\./\\\\./g')/g" $apacheRootFolder/sites/$hostName.conf
+sed -i".tmp" -e "s/##SITE_HOSTNAME##/$hostName/g" $apacheRootFolder/sites/$hostName.conf
+rm $apacheRootFolder/sites/$hostName.conf.tmp
+rm -rf $apacheTemplateRoot
+
+echo "------------------------------------------------------------"
+echo "Adding $hostName to Enonic XP vhosts"
+sed -i".tmp" -e "s/##SITE_HOSTNAME##/$hostName/g" $expVHostFile
 rm $expVHostFile.tmp
 
-echo "###############################################################################"
-echo "### Adding $instanceHostname to docker-compose.yml"
+echo "------------------------------------------------------------"
+echo "Adding $hostName to docker-compose.yml"
 
-sed -i".tmp" -e "s/SITE_HOSTNAME/$instanceHostname/g" docker-compose.yml
+sed -i".tmp" -e "s/##SITE_HOSTNAME##/$hostName/g" docker-compose.yml
 rm docker-compose.yml.tmp
 
-
-echo "###############################################################################"
-echo "### Generate and store password"
-echo "###############################################################################"
+echo "------------------------------------------------------------"
+echo "Generate and store password"
 
 suPasswdClear=$(openssl rand -base64 16 | tr -cd '[[:alnum:]]')
 hashedPwd=$(echo -n ${suPasswdClear} | shasum -a 512 | awk '{print $1}')
@@ -50,6 +101,6 @@ sed -i".tmp" -e "s/xp.suPassword=.*/$(echo xp.suPassword=$suPasswd)/g" $xpProj/c
 rm $xpProj/env.sh.tmp
 rm $xpProj/config/system.properties.tmp
 
-echo "###############################################################################"
-echo "### Ready to build and deploy with docker-compose"
-echo "###############################################################################"
+echo "------------------------------------------------------------"
+echo "Done! Ready to build and deploy with docker-compose"
+echo ""
