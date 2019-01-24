@@ -1,18 +1,21 @@
 <VirtualHost *:80>
-
   ServerName ##SITE_HOSTNAME##
   ServerAlias www.##SITE_HOSTNAME##
+  DocumentRoot /var/www/html/
 
   # Rewrite to ssh for all non-https
-  RewriteEngine on
-  RewriteCond %{HTTPS} !=on
-  RewriteRule ^/(.*) https://##SITE_HOSTNAME##/$1 [L,R=301]
+  # This will cause a loop if using CloudFlare flexible SSL
+  # ----
+  #RewriteEngine on
+  #RewriteCond %{HTTPS} !=on
+  #RewriteRule ^/(.*) https://##SITE_HOSTNAME##/$1 [L,R=301]
 
 </VirtualHost>
 
 <VirtualHost *:443>
   ServerName ##SITE_HOSTNAME##
   ServerAlias www.##SITE_HOSTNAME##
+  DocumentRoot /var/www/html/
 
   SSLEngine on
   SSLCertificateFile /etc/letsencrypt/certs/cert.pem
@@ -30,11 +33,16 @@
   ProxyPass / http://exp:8080/ timeout=5
   ProxyPassReverse / http://exp:8080/ timeout=5
 
-  # Rewrite
+  # Rewrite everything that is not hostname to https://hostname
   RewriteEngine on
   RewriteCond %{HTTP_HOST} !^##SITE_HOSTNAME_ESCAPED##$
   RewriteCond %{HTTP_HOST} !^$
   RewriteRule ^/(.*) https://##SITE_HOSTNAME##/$1 [L,R]
+
+  # Websockets rewrite
+  RewriteCond %{HTTP:Upgrade} =websocket [NC]
+  RewriteCond %{REQUEST_URI} / [NC]
+  RewriteRule /admin/(.*) ws://exp:8080/$1 [P,L]
 
 </VirtualHost>
 
