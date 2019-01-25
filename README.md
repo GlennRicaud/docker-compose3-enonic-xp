@@ -12,7 +12,7 @@ cd <instance name>
 
 To configure the instance automatically, use the configure.sh script and replace "my-server.hostname.com" with your server hostname. This will configure vhosts for both apache and Enonic XP and select the correct apache-setup
 ```
-./configure.sh -h <my-server.hostname.com> [--no-ssl] [--letsencrypt] [--usercert]"
+./configure.sh -h <my-server.hostname.com> [--no-ssl] [--letsencrypt] [--usercert]
 ```
 
 Edit the `exp/config/com.enonic.xp.web.vhost.cfg` and modify the `mapping.site.target` to point to your application.
