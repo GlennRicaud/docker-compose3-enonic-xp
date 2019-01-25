@@ -10,9 +10,9 @@ git clone https://github.com/enonic-cloud/docker-compose-enonic-xp <instance nam
 cd <instance name>
 ```
 
-To configure the instance automatically, use the configure.sh script and replace "my-server.hostname.com" with your server hostname. This will configure vhosts for both apache and Enonic XP.
+To configure the instance automatically, use the configure.sh script and replace "my-server.hostname.com" with your server hostname. This will configure vhosts for both apache and Enonic XP and select the correct apache-setup
 ```
-./configure.sh my-server.hostname.com
+./configure.sh -h <my-server.hostname.com> [--no-ssl] [--letsencrypt] [--usercert]"
 ```
 
 Edit the `exp/config/com.enonic.xp.web.vhost.cfg` and modify the `mapping.site.target` to point to your application.
