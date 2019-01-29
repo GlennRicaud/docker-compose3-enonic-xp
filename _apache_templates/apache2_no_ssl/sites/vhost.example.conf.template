@@ -5,18 +5,26 @@
 
   DocumentRoot /var/www/html/
 
+  # Proxy config
+  ####################
   ProxyRequests Off
   ProxyPreserveHost On
+  ## Websockets
+  ProxyPass /admin/event ws://exp:8080/admin/event
+  ProxyPassReverse /admin/event ws://exp:8080/admin/event
+  ## Rewrite to exp container
+  ProxyPass / http://exp:8080/ timeout=5
+  ProxyPassReverse / http://exp:8080/ timeout=5
 
-  ProxyPass / http://exp:8080/
-  ProxyPassReverse / http://exp:8080/
-
+  # Rewrites
+  ###################
   RewriteEngine on
-
   RewriteCond %{HTTP:Upgrade} =websocket [NC]
   RewriteCond %{REQUEST_URI} /admin [NC]
   RewriteRule /admin/(.*) ws://exp:8080/admin/$1 [P,L]
 
+  # Rewrite all variants to base hostname
+  ###################
   RewriteCond %{HTTP_HOST} !^##SITE_HOSTNAME_ESCAPED##$
   RewriteCond %{HTTP_HOST} !^$
   RewriteRule ^/(.*) http://##SITE_HOSTNAME##/$1 [L,R]
