@@ -19,6 +19,8 @@ services:
     restart: always
     ports:
       - "8080:8080"
+      #- "9200:9200" #Elastic http-api
+      #- "10001:10001" #profiling
     volumes:
       - repo:/enonic-xp/home/repo
       - work:/enonic-xp/home/work
