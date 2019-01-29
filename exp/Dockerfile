@@ -22,10 +22,21 @@ RUN cp -r $XP_ROOT/home.org $XP_ROOT/home
 COPY deploy/* $XP_ROOT/home/deploy/
 
 # Or download it from an alternative source on the net.
-#ENV SUPERHERO_VERSION 1.0.0
-#RUN wget -O $XP_ROOT/home/deploy/superhero-$SUPERHERO_VERSION.jar http://repo.enonic.com/public/com/enonic/app/superhero/$SUPERHERO_VERSION/superhero-$SUPERHERO_VERSION.jar
 RUN wget -O $XP_ROOT/home/deploy/snapshotter-$SNAPSHOTTER_VERSION.jar http://repo.enonic.com/public/com/enonic/app/snapshotter/$SNAPSHOTTER_VERSION/snapshotter-$SNAPSHOTTER_VERSION.jar
 RUN mkdir -p /enonic-xp/home/snapshots && chown $XP_USER /enonic-xp/home/snapshots
+
+###############################################################################
+# profiling
+###############################################################################
+
+#RUN wget https://www.yourkit.com/download/docker/YourKit-JavaProfiler-2018.04-docker.zip -P /tmp/ && \
+#  unzip /tmp/YourKit-JavaProfiler-2018.04-docker.zip -d /usr/local && \
+#  rm /tmp/YourKit-JavaProfiler-2018.04-docker.zip
+
+#ENV JAVA_OPTS="$JAVA_OPTS -agentpath:/usr/local/YourKit-JavaProfiler-2018.04/bin/linux-x86-64/libyjpagent.so=port=10001,listen=all"
+
+###############################################################################
+# configure
 ###############################################################################
 
 COPY config/* $XP_ROOT/home/config/
