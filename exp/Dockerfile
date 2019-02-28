@@ -1,6 +1,6 @@
 FROM enonic/xp-app:6.15.5
 
-ENV SNAPSHOTTER_VERSION 1.0.5
+ENV SNAPSHOTTER_VERSION 2.0.0
 # Set Memory settings
 # Defaults to 1/4 of servers physical mem
 # On single cpu
