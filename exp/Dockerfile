@@ -22,7 +22,7 @@ RUN cp -r $XP_ROOT/home.org $XP_ROOT/home
 COPY deploy/* $XP_ROOT/home/deploy/
 
 # Or download it from an alternative source on the net.
-RUN wget -O $XP_ROOT/home/deploy/snapshotter-$SNAPSHOTTER_VERSION.jar http://repo.enonic.com/public/com/enonic/app/snapshotter/$SNAPSHOTTER_VERSION/snapshotter-$SNAPSHOTTER_VERSION.jar
+RUN wget -O $XP_ROOT/home/deploy/snapshotter-$SNAPSHOTTER_VERSION.jar http://repo.enonic.com/public/com/enonic/app/app-snapshotter/$SNAPSHOTTER_VERSION/app-snapshotter-$SNAPSHOTTER_VERSION.jar
 RUN mkdir -p /enonic-xp/home/snapshots && chown $XP_USER /enonic-xp/home/snapshots
 
 ###############################################################################
