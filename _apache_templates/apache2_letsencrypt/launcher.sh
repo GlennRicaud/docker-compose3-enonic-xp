@@ -13,5 +13,5 @@ else
   certbot-auto renew --no-self-upgrade
 fi
 
-echo "Launcing apache2."
+echo "Launching apache2."
 apache2 -DFOREGROUND
