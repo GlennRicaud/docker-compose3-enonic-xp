@@ -1,3 +1,8 @@
+Header unset server
+Header always unset server
+ServerSignature Off
+ServerTokens Prod
+
 <VirtualHost *:80>
   ServerName ##SITE_HOSTNAME##
   ServerAlias www.##SITE_HOSTNAME##
