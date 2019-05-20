@@ -1,7 +1,5 @@
 Header unset server
 Header always unset server
-ServerSignature Off
-ServerTokens Prod
 
 <VirtualHost *:80>
 
