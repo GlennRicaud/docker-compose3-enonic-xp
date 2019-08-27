@@ -1,6 +1,6 @@
-FROM enonic/xp-app:6.15.5
+FROM enonic/xp:7.0.2-ubuntu
 
-ENV SNAPSHOTTER_VERSION 2.0.0
+ENV SNAPSHOTTER_VERSION 2.1.0
 # Set Memory settings
 # Defaults to 1/4 of servers physical mem
 # On single cpu
@@ -22,8 +22,7 @@ RUN cp -r $XP_ROOT/home.org $XP_ROOT/home
 COPY deploy/* $XP_ROOT/home/deploy/
 
 # Or download it from an alternative source on the net.
-RUN wget -O $XP_ROOT/home/deploy/snapshotter-$SNAPSHOTTER_VERSION.jar http://repo.enonic.com/public/com/enonic/app/app-snapshotter/$SNAPSHOTTER_VERSION/app-snapshotter-$SNAPSHOTTER_VERSION.jar
-RUN mkdir -p /enonic-xp/home/snapshots && chown $XP_USER /enonic-xp/home/snapshots
+RUN wget -O $XP_ROOT/home/deploy/snapshotter-$SNAPSHOTTER_VERSION.jar http://repo.enonic.com/public/com/enonic/app/snapshotter/$SNAPSHOTTER_VERSION/snapshotter-$SNAPSHOTTER_VERSION.jar
 
 ###############################################################################
 # profiling
@@ -39,12 +38,17 @@ RUN mkdir -p /enonic-xp/home/snapshots && chown $XP_USER /enonic-xp/home/snapsho
 # configure
 ###############################################################################
 
+RUN mkdir -p /enonic-xp/home/snapshots && chown $XP_USER /enonic-xp/home/snapshots
+RUN mkdir -p /enonic-xp/home/work && chown $XP_USER /enonic-xp/home/work
+RUN mkdir -p /enonic-xp/home/repo/index && chown $XP_USER /enonic-xp/home/repo/index
+
 COPY config/* $XP_ROOT/home/config/
 
 COPY backup.sh /usr/local/bin/backup.sh
 RUN chmod +x /usr/local/bin/backup.sh
 
-RUN mkdir $XP_ROOT/home/repo && mkdir -p $XP_ROOT/home/work && mkdir -p $XP_ROOT/home/snapshots
-RUN chown -R enonic-xp:enonic-xp $XP_ROOT/home
+RUN chown enonic-xp -R $XP_ROOT/home
+
+EXPOSE 9200
 
 USER enonic-xp

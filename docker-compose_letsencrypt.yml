@@ -18,6 +18,8 @@ services:
     build: exp
     restart: always
     ports:
+      - "2609:2609"
+      - "4848:4848"
       - "8080:8080"
       #- "9200:9200" #Elastic http-api
       #- "10001:10001" #profiling
