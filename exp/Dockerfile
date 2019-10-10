@@ -1,4 +1,4 @@
-FROM enonic/xp-app:6.15.5
+FROM enonic/xp-app:6.15.8
 
 ENV SNAPSHOTTER_VERSION 2.0.0
 # Set Memory settings
