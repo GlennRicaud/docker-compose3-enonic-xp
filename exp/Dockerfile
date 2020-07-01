@@ -1,6 +1,6 @@
-FROM enonic/xp:7.0.2-ubuntu
+FROM enonic/xp:7.3.1-ubuntu
 
-ENV SNAPSHOTTER_VERSION 2.1.0
+ENV SNAPSHOTTER_VERSION 3.0.1
 # Set Memory settings
 # Defaults to 1/4 of servers physical mem
 # On single cpu
@@ -22,17 +22,7 @@ RUN cp -r $XP_ROOT/home.org $XP_ROOT/home
 COPY deploy/* $XP_ROOT/home/deploy/
 
 # Or download it from an alternative source on the net.
-RUN wget -O $XP_ROOT/home/deploy/snapshotter-$SNAPSHOTTER_VERSION.jar http://repo.enonic.com/public/com/enonic/app/snapshotter/$SNAPSHOTTER_VERSION/snapshotter-$SNAPSHOTTER_VERSION.jar
-
-###############################################################################
-# profiling
-###############################################################################
-
-#RUN wget https://www.yourkit.com/download/docker/YourKit-JavaProfiler-2018.04-docker.zip -P /tmp/ && \
-#  unzip /tmp/YourKit-JavaProfiler-2018.04-docker.zip -d /usr/local && \
-#  rm /tmp/YourKit-JavaProfiler-2018.04-docker.zip
-
-#ENV JAVA_OPTS="$JAVA_OPTS -agentpath:/usr/local/YourKit-JavaProfiler-2018.04/bin/linux-x86-64/libyjpagent.so=port=10001,listen=all"
+RUN wget -O $XP_ROOT/home/deploy/snapshotter-$SNAPSHOTTER_VERSION.jar https://repo.enonic.com/public/com/enonic/app/snapshotter/$SNAPSHOTTER_VERSION/snapshotter-$SNAPSHOTTER_VERSION.jar
 
 ###############################################################################
 # configure
