@@ -21,6 +21,7 @@ services:
       - repo:/enonic-xp/home/repo
       - work:/enonic-xp/home/work
       - snapshots:/enonic-xp/home/snapshots
+      - data:/enonic-xp/home/data
     labels:
       io.enonic.backup.prescripts: "/usr/local/bin/backup.sh"
   mail:
@@ -32,3 +33,4 @@ volumes:
   repo:
   work:
   snapshots:
+  data:

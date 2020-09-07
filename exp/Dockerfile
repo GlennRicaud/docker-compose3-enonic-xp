@@ -30,7 +30,8 @@ RUN wget -O $XP_ROOT/home/deploy/snapshotter-$SNAPSHOTTER_VERSION.jar https://re
 
 RUN mkdir -p /enonic-xp/home/snapshots && chown $XP_USER /enonic-xp/home/snapshots
 RUN mkdir -p /enonic-xp/home/work && chown $XP_USER /enonic-xp/home/work
-RUN mkdir -p /enonic-xp/home/repo/index && chown $XP_USER /enonic-xp/home/repo/index
+RUN mkdir -p /enonic-xp/home/repo/ && chown $XP_USER /enonic-xp/home/repo
+RUN mkdir -p /enonic-xp/home/data/ && chown $XP_USER /enonic-xp/home/data
 
 COPY config/* $XP_ROOT/home/config/
 
